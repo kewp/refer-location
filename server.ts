@@ -18,6 +18,16 @@ function log(message: string) {
     console.log(message);
 }
 
+const bytes = await Deno.readFile("./IP2LOCATION-LITE-DB3.BIN");
+
+// read from bytes variable instead of file
+function readRow2(readBytes: number, position:number)
+{
+    const buf = bytes.slice(position-1, position + readBytes - 1);
+    log(`buf.length: ${buf.length}`);
+    return buf;
+}
+
 async function readRow(file: Deno.FsFile, readBytes: number, position: number) {
     const cursorPosition = await file.seek(position-1, Deno.SeekMode.Start);
     log(`cursorPosition: ${cursorPosition}`);
@@ -35,6 +45,24 @@ function read32Row(position: number, buffer: Uint8Array) {
     log(`var1: ${var1}`);
     return var1;
 }
+
+router.get("/test2", (ctx) => {
+
+    _log = [];
+
+    const len = 64; // 64-byte header
+    const row = readRow2(len, 1);
+    const dbCount = read32Row(5, row);
+    log(`dbCount: ${dbCount}`);
+    const indexBaseAddress = read32Row(21, row);
+    log(`indexBaseAddress: ${indexBaseAddress}`);
+    const row2 = readRow2(524288, indexBaseAddress);
+    log(
+        `read32Row result for position 524284 is ${read32Row(524284, row2)}`,
+    );
+
+    ctx.response.body = _log.join("\n");
+});
 
 router.get("/test", async (ctx) => {
 
