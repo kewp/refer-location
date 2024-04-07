@@ -41,14 +41,14 @@ router.get("/test", async (ctx) => {
 
     const fd = await Deno.open("./IP2LOCATION-LITE-DB3.BIN", { read: true });
     const len = 64; // 64-byte header
-    let row = await readRow(fd, len, 1);
+    const row = await readRow(fd, len, 1);
     const dbCount = read32Row(5, row);
     log(`dbCount: ${dbCount}`);
     const indexBaseAddress = read32Row(21, row);
     log(`indexBaseAddress: ${indexBaseAddress}`);
-    row = await readRow(fd, 524288, indexBaseAddress);
+    const row2 = await readRow(fd, 524288, indexBaseAddress);
     log(
-        `read32Row result for position 524284 is ${read32Row(524284, row)}`,
+        `read32Row result for position 524284 is ${read32Row(524284, row2)}`,
     );
 
     ctx.response.body = _log.join("\n");
