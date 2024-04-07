@@ -22,6 +22,7 @@ async function readRow(file: Deno.FsFile, readBytes: number, position: number) {
     const cursorPosition = await file.seek(position-1, Deno.SeekMode.Start);
     log(`cursorPosition: ${cursorPosition}`);
     const buf = new Uint8Array(readBytes);
+    log(`buf.length: ${buf.length}`);
     const bytesRead = file.readSync(buf);
     log(`bytesRead: ${bytesRead}`);
     return buf;
